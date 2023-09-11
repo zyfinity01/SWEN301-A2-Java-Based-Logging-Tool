@@ -1,6 +1,7 @@
 package nz.ac.wgtn.swen301.assignment2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.log4j.Layout;
 import org.apache.log4j.spi.LoggingEvent;
 
@@ -8,16 +9,18 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
 
 public class JsonLayout extends Layout {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
 
     @Override
     public String format(LoggingEvent event) {
-        Map<String, String> jsonMap = new HashMap<>();
+        Map<String, String> jsonMap = new LinkedHashMap<>();
         jsonMap.put("name", event.getLoggerName());
         jsonMap.put("level", event.getLevel().toString());
         jsonMap.put("timestamp", convertTimestamp(event.getTimeStamp()));
