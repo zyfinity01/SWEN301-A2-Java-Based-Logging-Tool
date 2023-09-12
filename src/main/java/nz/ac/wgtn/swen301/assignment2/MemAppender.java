@@ -11,13 +11,19 @@ public class MemAppender {
     private List<LogEvent> events = new ArrayList<>();
 
     String name;
-
+    Long maxSize = 1000L;
+    Integer discardedLogs = 0;
 
 
     public MemAppender(String name) {
         this.name = name;
     }
 
+
+    public MemAppender(String name, Long maxSize) {
+        this.name = name;
+        this.maxSize = maxSize;
+    }
 
 
     public List<LogEvent> getCurrentLogs(){
