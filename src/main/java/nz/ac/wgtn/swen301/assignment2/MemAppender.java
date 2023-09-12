@@ -25,6 +25,14 @@ public class MemAppender {
         this.maxSize = maxSize;
     }
 
+    public void append(LogEvent event){
+        if (events.size() < maxSize){
+            events.add(event);
+        } else {
+            events.remove(0);
+            discardedLogs++;
+        }
+    }
 
     public List<LogEvent> getCurrentLogs(){
         return Collections.unmodifiableList(events);
