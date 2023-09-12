@@ -1,6 +1,9 @@
 package nz.ac.wgtn.swen301.assignment2;
+
 import org.apache.log4j.pattern.LogEvent;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MemAppender {
@@ -14,5 +17,12 @@ public class MemAppender {
     public MemAppender(String name) {
         this.name = name;
     }
+
+
+
+    public List<LogEvent> getCurrentLogs(){
+        return Collections.unmodifiableList(events);
+    }
+
 
 }
