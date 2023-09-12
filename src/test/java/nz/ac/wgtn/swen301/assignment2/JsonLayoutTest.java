@@ -54,5 +54,41 @@ public class JsonLayoutTest {
         }
         assertEquals(expectedNode, actualNode);
     }
+
+
+
+
+    @Test
+    public void test2(){
+        Category logger = Category.getInstance("foo");
+        Instant instant = Instant.parse("2011-12-03T10:15:30Z");
+        long timeStamp = instant.toEpochMilli();
+        Level level = Level.WARN;
+        Object message = "something went wrong";
+        String threadName = "main";
+        ThrowableInformation throwable = new ThrowableInformation(new Exception("Test exception"), logger);
+        String ndc = "NDC";
+        LocationInfo info = new LocationInfo(new Throwable("Test throwable"), "FQN");
+        Map properties = new HashMap();
+        LoggingEvent le = new LoggingEvent("FQN", logger, timeStamp, level, message, threadName, throwable, ndc, info, properties);
+        String json = new JsonLayout().format(le);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode actualNode = null;
+        try {
+            actualNode = objectMapper.readTree(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        assertTrue(actualNode.has("name"));
+        assertTrue(actualNode.has("level"));
+        assertTrue(actualNode.has("timestamp"));
+        assertTrue(actualNode.has("thread"));
+        assertTrue(actualNode.has("message"));
+        assertEquals("foo", actualNode.get("name").asText());
+        assertEquals("WARN", actualNode.get("level").asText());
+        assertEquals("2011-12-03T10:15:30Z", actualNode.get("timestamp").asText());
+        assertEquals("main", actualNode.get("thread").asText());
+        assertEquals("something went wrong", actualNode.get("message").asText());
+    }
     }
 
