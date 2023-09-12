@@ -1,14 +1,20 @@
 package nz.ac.wgtn.swen301.assignment2;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.pattern.LogEvent;
+import org.apache.log4j.spi.LoggingEvent;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class MemAppender {
 
-    private List<LogEvent> events = new ArrayList<>();
+    private List<LoggingEvent> events = new ArrayList<>();
 
     String name;
     Long maxSize = 1000L;
@@ -25,7 +31,7 @@ public class MemAppender {
         this.maxSize = maxSize;
     }
 
-    public void append(LogEvent event){
+    public void append(LoggingEvent event){
         if (events.size() < maxSize){
             events.add(event);
         } else {
@@ -34,9 +40,23 @@ public class MemAppender {
         }
     }
 
-    public List<LogEvent> getCurrentLogs(){
+    public List<LoggingEvent> getCurrentLogs(){
         return Collections.unmodifiableList(events);
     }
 
+    public void exportToJson(String filename) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        for(LoggingEvent event : events) {
+            String json = new JsonLayout().format(event);
+            JsonNode jNode = new ObjectMapper().readTree(json);
+            try {
+                objectMapper.writeValue(new File(this.name + ".json"), jNode);
+                System.out.println("JSON file created successfully");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }
