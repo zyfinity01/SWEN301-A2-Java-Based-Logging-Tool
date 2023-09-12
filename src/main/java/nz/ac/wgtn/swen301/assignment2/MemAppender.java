@@ -8,6 +8,8 @@ import org.apache.log4j.spi.LoggingEvent;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,6 +47,17 @@ public class MemAppender {
     }
 
     public void exportToJson(String filename) throws JsonProcessingException {
+
+
+        Path path = Paths.get(filename);
+        if (path.isAbsolute()) {
+            System.out.println("The input is an absolute path.");
+        } else if (path.getNameCount() > 1) {
+            System.out.println("The input is a relative path.");
+        } else {
+            System.out.println("The input is a plain filename");
+            filename = System.getProperty("user.dir") + filename;
+        }
         ObjectMapper objectMapper = new ObjectMapper();
         List<JsonNode> jsonTree = new ArrayList<>();
 
