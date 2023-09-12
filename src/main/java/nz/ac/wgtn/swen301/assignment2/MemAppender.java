@@ -3,7 +3,10 @@ package nz.ac.wgtn.swen301.assignment2;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.log4j.pattern.LogEvent;
+
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
 
 import java.io.File;
@@ -14,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MemAppender {
+public class MemAppender extends AppenderSkeleton {
 
     private List<LoggingEvent> events = new ArrayList<>();
 
@@ -25,15 +28,18 @@ public class MemAppender {
 
     public MemAppender(String name) {
         this.name = name;
+        this.setLayout(new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"));
     }
 
 
     public MemAppender(String name, Long maxSize) {
         this.name = name;
         this.maxSize = maxSize;
+        this.setLayout(new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"));
     }
 
     public void append(LoggingEvent event){
+
         if (events.size() < maxSize){
             events.add(event);
         } else {
@@ -47,8 +53,6 @@ public class MemAppender {
     }
 
     public void exportToJson(String filename) throws JsonProcessingException {
-
-
         Path path = Paths.get(filename);
         if (path.isAbsolute()) {
             System.out.println("The input is an absolute path.");
@@ -75,4 +79,13 @@ public class MemAppender {
         }
     }
 
+    @Override
+    public void close() {
+
+    }
+
+    @Override
+    public boolean requiresLayout() {
+        return false;
+    }
 }
