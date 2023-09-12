@@ -46,16 +46,19 @@ public class MemAppender {
 
     public void exportToJson(String filename) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
+        List<JsonNode> jsonTree = new ArrayList<>();
 
         for(LoggingEvent event : events) {
             String json = new JsonLayout().format(event);
             JsonNode jNode = new ObjectMapper().readTree(json);
-            try {
-                objectMapper.writeValue(new File(this.name + ".json"), jNode);
-                System.out.println("JSON file created successfully");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            jsonTree.add(jNode);
+        }
+
+        try {
+            objectMapper.writeValue(new File(this.name + ".json"), jsonTree);
+            System.out.println("JSON file created successfully");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
