@@ -26,20 +26,22 @@ public class MemAppender extends AppenderSkeleton {
     Integer discardedLogs = 0;
 
 
-    public MemAppender(String name) {
-        this.name = name;
+
+    public MemAppender() {
         this.setLayout(new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"));
     }
 
 
-    public MemAppender(String name, Long maxSize) {
-        this.name = name;
+    public void setMaxSize(Long maxSize) {
         this.maxSize = maxSize;
-        this.setLayout(new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"));
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void append(LoggingEvent event){
-
         if (events.size() < maxSize){
             events.add(event);
         } else {

@@ -18,7 +18,8 @@ public class MemAppenderTest {
 
     @Test
     public void test1(){
-        MemAppender memAppender = new MemAppender("test1");
+        MemAppender memAppender = new MemAppender();
+        memAppender.setName("test1");
         logger.addAppender(memAppender);
 
         logger.info("This is an info message.");
