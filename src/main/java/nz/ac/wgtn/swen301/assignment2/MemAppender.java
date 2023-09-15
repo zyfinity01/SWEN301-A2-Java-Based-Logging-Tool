@@ -9,8 +9,10 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
 
+import javax.management.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -39,7 +41,24 @@ public class MemAppender extends AppenderSkeleton {
     @Override
     public void setName(String name) {
         this.name = name;
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        ObjectName objectName = null;
+        try {
+            objectName = new ObjectName("nz.ac.wgtn.swen301.assignment2:type=MemAppender,name=" + this.name);
+        } catch (MalformedObjectNameException e) {
+            e.printStackTrace();
+        }
+        try {
+            mbs.registerMBean(this, objectName);
+        } catch (InstanceAlreadyExistsException e) {
+            e.printStackTrace();
+        } catch (MBeanRegistrationException e) {
+            e.printStackTrace();
+        } catch (NotCompliantMBeanException e) {
+            e.printStackTrace();
+        }
     }
+
 
     public void append(LoggingEvent event){
         if (events.size() < maxSize){
