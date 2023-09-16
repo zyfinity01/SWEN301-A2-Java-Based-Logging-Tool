@@ -30,13 +30,9 @@ public class MemAppenderTest {
         Path path = Paths.get(System.getProperty("user.dir") + fileName);
         System.out.println(path);
 
-        try {
-            memAppender.exportToJson(fileName);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        memAppender.exportToJSON(fileName);
         assertTrue(Files.exists(path));
-        }
+    }
 
     @Test
     public void testGetCurrentLogs(){
