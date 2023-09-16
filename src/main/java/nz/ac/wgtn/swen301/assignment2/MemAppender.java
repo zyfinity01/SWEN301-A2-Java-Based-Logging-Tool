@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MemAppender extends AppenderSkeleton {
+public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
 
     private List<LoggingEvent> events = new ArrayList<>();
 
@@ -59,6 +59,23 @@ public class MemAppender extends AppenderSkeleton {
         }
     }
 
+    public String[] getLogs() {
+        String[] logs = new String[events.size()];
+        PatternLayout layout = (PatternLayout) this.getLayout();
+        for (int i = 0; i < events.size(); i++) {
+            logs[i] = new JsonLayout().format(events.get(i));
+        }
+        return logs;
+    }
+
+    public long getLogCount() {
+        return events.size();
+    }
+
+    public long getDiscardedLogCount() {
+        return discardedLogs;
+    }
+
 
     public void append(LoggingEvent event){
         if (events.size() < maxSize){
@@ -73,7 +90,7 @@ public class MemAppender extends AppenderSkeleton {
         return Collections.unmodifiableList(events);
     }
 
-    public void exportToJson(String filename) throws JsonProcessingException {
+    public void exportToJSON(String filename) {
         Path path = Paths.get(filename);
         if (path.isAbsolute()) {
             System.out.println("The input is an absolute path.");
@@ -88,7 +105,12 @@ public class MemAppender extends AppenderSkeleton {
 
         for(LoggingEvent event : events) {
             String json = new JsonLayout().format(event);
-            JsonNode jNode = new ObjectMapper().readTree(json);
+            JsonNode jNode = null;
+            try {
+                jNode = new ObjectMapper().readTree(json);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
             jsonTree.add(jNode);
         }
 
@@ -99,6 +121,8 @@ public class MemAppender extends AppenderSkeleton {
             e.printStackTrace();
         }
     }
+
+
 
     @Override
     public void close() {
