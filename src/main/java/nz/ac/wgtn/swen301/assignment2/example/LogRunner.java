@@ -1,14 +1,20 @@
 package nz.ac.wgtn.swen301.assignment2.example;
 
+import nz.ac.wgtn.swen301.assignment2.MemAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import java.util.Random;
 
 public class LogRunner {
-    private static final Logger logger = Logger.getLogger(LogRunner.class);
+    private static final Logger logger = Logger.getLogger(nz.ac.wgtn.swen301.assignment2.MemAppender.class);
+
+
 
     public static void main(String[] args) {
+        MemAppender memAppender = new MemAppender();
+        memAppender.setName("LogRunner");
+        logger.addAppender(memAppender);
         // run for 2 minutes (120 seconds)
         for (int i = 0; i < 120; i++) {
             // generate a random log level and message
