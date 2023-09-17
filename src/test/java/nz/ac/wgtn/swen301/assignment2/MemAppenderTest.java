@@ -49,4 +49,18 @@ public class MemAppenderTest {
         assertEquals("This is an error message.", logs.get(1).getMessage());
     }
 
+
+    @Test
+    public void testGetLogs(){
+        MemAppender memAppender = new MemAppender();
+        Logger logger = Logger.getLogger(MemAppenderTest.class);
+        logger.addAppender(memAppender);
+
+        logger.info("This is an info message.");
+        logger.error("This is an error message.");
+
+        String[] logs = memAppender.getLogs();
+        assertEquals(2, logs.length);
+    }
+
 }
