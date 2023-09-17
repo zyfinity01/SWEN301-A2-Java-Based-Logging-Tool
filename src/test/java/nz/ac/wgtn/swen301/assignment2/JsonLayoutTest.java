@@ -139,5 +139,29 @@ public class JsonLayoutTest {
     }
 
 
+    @Test
+    public void testLongMessage(){
+        Category logger = Category.getInstance("foo");
+        long timeStamp = System.currentTimeMillis();
+        Level level = Level.WARN;
+        Object message = "a".repeat(1000);
+        String threadName = "main";
+        LoggingEvent le = new LoggingEvent("FQN", logger, timeStamp, level, message, threadName, null, null, null, null);
+        String json = new JsonLayout().format(le);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode actualNode = null;
+        try {
+            actualNode = objectMapper.readTree(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        assertEquals("foo", actualNode.get("name").asText());
+        assertEquals("WARN", actualNode.get("level").asText());
+        assertTrue(actualNode.has("timestamp"));
+        assertEquals("main", actualNode.get("thread").asText());
+        assertEquals("a".repeat(1000), actualNode.get("message").asText());
+    }
+
+
 }
 
