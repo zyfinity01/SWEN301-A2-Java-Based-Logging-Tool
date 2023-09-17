@@ -21,7 +21,7 @@ import java.util.List;
 
 public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
 
-    private List<LoggingEvent> events = new ArrayList<>();
+    private final List<LoggingEvent> events = new ArrayList<>();
 
     String name;
     Long maxSize = 1000L;
@@ -55,11 +55,7 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
         }
         try {
             mbs.registerMBean(this, objectName);
-        } catch (InstanceAlreadyExistsException e) {
-            e.printStackTrace();
-        } catch (MBeanRegistrationException e) {
-            e.printStackTrace();
-        } catch (NotCompliantMBeanException e) {
+        } catch (InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
             e.printStackTrace();
         }
     }
@@ -121,7 +117,7 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
         }
 
         try {
-            objectMapper.writeValue(new File(this.name + ".json"), jsonTree);
+            objectMapper.writeValue(new File(filename + ".json"), jsonTree);
             System.out.println("JSON file created successfully");
         } catch (IOException e) {
             e.printStackTrace();
@@ -132,7 +128,14 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
 
     @Override
     public void close() {
-
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        ObjectName objectName;
+        try {
+            objectName = new ObjectName("nz.ac.wgtn.swen301.assignment2:type=MemAppender,name=" + this.name);
+            mbs.unregisterMBean(objectName);
+        } catch (MalformedObjectNameException | InstanceNotFoundException | MBeanRegistrationException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
