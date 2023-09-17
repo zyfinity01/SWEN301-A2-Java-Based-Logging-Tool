@@ -109,5 +109,12 @@ public class MemAppenderTest {
         assertFalse(memAppender.requiresLayout());
     }
 
+    @Test
+    public void testSetName(){
+        MemAppender memAppender = new MemAppender();
+        memAppender.setName("testName");
+        assertEquals("testName", memAppender.getName());
+    }
+
 
 }
