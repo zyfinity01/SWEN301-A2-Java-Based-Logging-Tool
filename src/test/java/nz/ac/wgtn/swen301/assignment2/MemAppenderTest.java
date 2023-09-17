@@ -10,8 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class MemAppenderTest {
@@ -101,6 +100,13 @@ public class MemAppenderTest {
         List<LoggingEvent> logs = memAppender.getCurrentLogs();
         assertEquals(1, logs.size());
         assertEquals("This is an info message.", logs.get(0).getMessage());
+    }
+
+
+    @Test
+    public void testRequiresLayout(){
+        MemAppender memAppender = new MemAppender();
+        assertFalse(memAppender.requiresLayout());
     }
 
 
