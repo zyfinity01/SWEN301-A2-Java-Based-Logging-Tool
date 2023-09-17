@@ -40,7 +40,8 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
 
     @Override
     public void setName(String name) {
-        this.name = name;
+        //this.name = name;
+        super.setName(name);
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         ObjectName objectName = null;
         try {
@@ -58,6 +59,7 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
             e.printStackTrace();
         }
     }
+
 
     public String[] getLogs() {
         String[] logs = new String[events.size()];
