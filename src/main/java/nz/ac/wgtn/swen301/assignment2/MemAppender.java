@@ -24,12 +24,13 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
     private final List<LoggingEvent> events = new ArrayList<>();
 
     String name;
-    Long maxSize = 1000L;
+    Long maxSize;
     Integer discardedLogs = 0;
 
 
 
     public MemAppender() {
+        this.maxSize = 1000L;
         this.setLayout(new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"));
     }
 
@@ -49,7 +50,7 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         ObjectName objectName = null;
         try {
-            objectName = new ObjectName("nz.ac.wgtn.swen301.assignment2:type=MemAppender,name=" + this.name);
+            objectName = new ObjectName("nz.ac.wgtn.swen301.assignment2:type=MemAppender,name=" + this.getName());
         } catch (MalformedObjectNameException e) {
             e.printStackTrace();
         }
@@ -78,8 +79,8 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
         return discardedLogs;
     }
 
-
     public void append(LoggingEvent event){
+        System.out.println(new JsonLayout().format(event));
         if (events.size() < maxSize){
             events.add(event);
         } else {
@@ -93,15 +94,8 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
     }
 
     public void exportToJSON(String filename) {
-        Path path = Paths.get(filename);
-        if (path.isAbsolute()) {
-            System.out.println("The input is an absolute path.");
-        } else if (path.getNameCount() > 1) {
-            System.out.println("The input is a relative path.");
-        } else {
-            System.out.println("The input is a plain filename");
-            filename = System.getProperty("user.dir") + filename;
-        }
+        filename = System.getProperty("user.dir") + filename;
+        System.out.println(filename);
         ObjectMapper objectMapper = new ObjectMapper();
         List<JsonNode> jsonTree = new ArrayList<>();
 
@@ -110,6 +104,7 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
             JsonNode jNode = null;
             try {
                 jNode = new ObjectMapper().readTree(json);
+                System.out.println(jNode);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -117,7 +112,7 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
         }
 
         try {
-            objectMapper.writeValue(new File(filename + ".json"), jsonTree);
+            objectMapper.writeValue(new File(filename), jsonTree);
             System.out.println("JSON file created successfully");
         } catch (IOException e) {
             e.printStackTrace();
@@ -125,13 +120,12 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
     }
 
 
-
     @Override
     public void close() {
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         ObjectName objectName;
         try {
-            objectName = new ObjectName("nz.ac.wgtn.swen301.assignment2:type=MemAppender,name=" + this.name);
+            objectName = new ObjectName("nz.ac.wgtn.swen301.assignment2:type=MemAppender,name=" + this.getName());
             mbs.unregisterMBean(objectName);
         } catch (MalformedObjectNameException | InstanceNotFoundException | MBeanRegistrationException e) {
             e.printStackTrace();
