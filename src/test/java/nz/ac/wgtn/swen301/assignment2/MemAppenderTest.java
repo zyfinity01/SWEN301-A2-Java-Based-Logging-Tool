@@ -63,4 +63,17 @@ public class MemAppenderTest {
         assertEquals(2, logs.length);
     }
 
+
+    @Test
+    public void testGetLogCount(){
+        MemAppender memAppender = new MemAppender();
+        Logger logger = Logger.getLogger(MemAppenderTest.class);
+        logger.addAppender(memAppender);
+
+        logger.info("This is an info message.");
+        logger.error("This is an error message.");
+
+        assertEquals(2, memAppender.getLogCount());
+    }
+
 }
