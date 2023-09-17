@@ -90,4 +90,18 @@ public class MemAppenderTest {
     }
 
 
+    @Test
+    public void testAppend(){
+        MemAppender memAppender = new MemAppender();
+        Logger logger = Logger.getLogger(MemAppenderTest.class);
+        logger.addAppender(memAppender);
+
+        logger.info("This is an info message.");
+
+        List<LoggingEvent> logs = memAppender.getCurrentLogs();
+        assertEquals(1, logs.size());
+        assertEquals("This is an info message.", logs.get(0).getMessage());
+    }
+
+
 }
