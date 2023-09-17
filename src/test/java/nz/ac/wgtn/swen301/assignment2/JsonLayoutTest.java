@@ -15,8 +15,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonLayoutTest {
 
@@ -160,6 +159,13 @@ public class JsonLayoutTest {
         assertTrue(actualNode.has("timestamp"));
         assertEquals("main", actualNode.get("thread").asText());
         assertEquals("a".repeat(1000), actualNode.get("message").asText());
+    }
+
+
+    @Test
+    public void testIgnoresThrowable(){
+        JsonLayout layout = new JsonLayout();
+        assertFalse(layout.ignoresThrowable());
     }
 
 
