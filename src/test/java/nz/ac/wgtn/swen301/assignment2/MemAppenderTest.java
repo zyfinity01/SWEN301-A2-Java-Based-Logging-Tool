@@ -5,6 +5,10 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.junit.jupiter.api.Test;
 import org.apache.log4j.Logger;
 
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,9 +29,9 @@ public class MemAppenderTest {
         logger.addAppender(memAppender);
 
         logger.info("This is an info message.");
+        logger.info("This is another info message.");
         String fileName = "/test1.json";
         Path path = Paths.get(System.getProperty("user.dir") + fileName);
-        System.out.println(path);
 
         memAppender.exportToJSON(fileName);
         assertTrue(Files.exists(path));
@@ -123,6 +127,51 @@ public class MemAppenderTest {
         memAppender.setMaxSize(500L);
         assertEquals(500L, memAppender.getMaxSize());
     }
+
+    @Test
+    public void testExportToJSONWithDiscardedLogs(){
+        MemAppender memAppender = new MemAppender();
+        memAppender.setName("test4");
+        memAppender.setMaxSize(1L);
+        Logger logger = Logger.getLogger(MemAppenderTest.class);
+        logger.addAppender(memAppender);
+
+        logger.info("This is an info message.");
+        logger.error("This is an error message.");
+        String fileName = "/test4.json";
+        Path path = Paths.get(System.getProperty("user.dir") + fileName);
+
+        memAppender.exportToJSON(fileName);
+        assertTrue(Files.exists(path));
+    }
+
+
+    @Test
+    public void testClose() {
+        MemAppender memAppender = new MemAppender();
+        memAppender.setName("testClose");
+        Logger logger = Logger.getLogger(MemAppenderTest.class);
+        logger.addAppender(memAppender);
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        ObjectName objectName = null;
+        try {
+            objectName = new ObjectName("nz.ac.wgtn.swen301.assignment2:type=MemAppender,name=testClose");
+        } catch (MalformedObjectNameException e) {
+            e.printStackTrace();
+        }
+
+        // Verify that the MemAppender MBean is registered
+        assertTrue(mbs.isRegistered(objectName));
+
+        // Close the MemAppender
+        memAppender.close();
+
+        // Verify that the MemAppender MBean is unregistered
+        assertFalse(mbs.isRegistered(objectName));
+
+        logger.removeAppender(memAppender);
+    }
+
 
 
 }
