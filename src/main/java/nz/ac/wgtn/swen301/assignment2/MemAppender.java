@@ -38,6 +38,10 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
         this.maxSize = maxSize;
     }
 
+    public Long getMaxSize() {
+        return maxSize;
+    }
+
     @Override
     public void setName(String name) {
         //this.name = name;
