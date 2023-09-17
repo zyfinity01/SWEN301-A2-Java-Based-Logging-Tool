@@ -117,4 +117,12 @@ public class MemAppenderTest {
     }
 
 
+    @Test
+    public void testSetMaxSize(){
+        MemAppender memAppender = new MemAppender();
+        memAppender.setMaxSize(500L);
+        assertEquals(500L, memAppender.getMaxSize());
+    }
+
+
 }
