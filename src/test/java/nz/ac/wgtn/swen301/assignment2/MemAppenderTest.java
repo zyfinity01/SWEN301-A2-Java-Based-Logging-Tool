@@ -76,4 +76,18 @@ public class MemAppenderTest {
         assertEquals(2, memAppender.getLogCount());
     }
 
+    @Test
+    public void testGetDiscardedLogCount(){
+        MemAppender memAppender = new MemAppender();
+        memAppender.setMaxSize(1L);
+        Logger logger = Logger.getLogger(MemAppenderTest.class);
+        logger.addAppender(memAppender);
+
+        logger.info("This is an info message.");
+        logger.error("This is an error message.");
+
+        assertEquals(1, memAppender.getDiscardedLogCount());
+    }
+
+
 }
