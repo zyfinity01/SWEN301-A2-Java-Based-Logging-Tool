@@ -90,5 +90,30 @@ public class JsonLayoutTest {
         assertEquals("main", actualNode.get("thread").asText());
         assertEquals("something went wrong", actualNode.get("message").asText());
     }
+
+    @Test
+    public void testEmptyValues(){
+        Category logger = Category.getInstance("");
+        long timeStamp = System.currentTimeMillis();
+        Level level = Level.INFO;
+        Object message = "";
+        String threadName = "";
+        LoggingEvent le = new LoggingEvent("FQN", logger, timeStamp, level, message, threadName, null, null, null, null);
+        String json = new JsonLayout().format(le);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode actualNode = null;
+        try {
+            actualNode = objectMapper.readTree(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        assertEquals("", actualNode.get("name").asText());
+        assertEquals("INFO", actualNode.get("level").asText());
+        assertTrue(actualNode.has("timestamp"));
+        assertEquals("", actualNode.get("thread").asText());
+        assertEquals("", actualNode.get("message").asText());
     }
+
+
+}
 
