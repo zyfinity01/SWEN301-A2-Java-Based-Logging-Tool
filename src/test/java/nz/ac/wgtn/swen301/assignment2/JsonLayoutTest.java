@@ -114,6 +114,30 @@ public class JsonLayoutTest {
         assertEquals("", actualNode.get("message").asText());
     }
 
+    @Test
+    public void testDifferentLogLevels(){
+        for (Level level : new Level[] {Level.DEBUG, Level.INFO, Level.WARN, Level.ERROR, Level.FATAL}) {
+            Category logger = Category.getInstance("foo");
+            long timeStamp = System.currentTimeMillis();
+            Object message = "something went wrong";
+            String threadName = "main";
+            LoggingEvent le = new LoggingEvent("FQN", logger, timeStamp, level, message, threadName, null, null, null, null);
+            String json = new JsonLayout().format(le);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode actualNode = null;
+            try {
+                actualNode = objectMapper.readTree(json);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            assertEquals("foo", actualNode.get("name").asText());
+            assertEquals(level.toString(), actualNode.get("level").asText());
+            assertTrue(actualNode.has("timestamp"));
+            assertEquals("main", actualNode.get("thread").asText());
+            assertEquals("something went wrong", actualNode.get("message").asText());
+        }
+    }
+
 
 }
 
