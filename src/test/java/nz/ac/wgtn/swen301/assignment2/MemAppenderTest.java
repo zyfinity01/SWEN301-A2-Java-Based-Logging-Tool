@@ -132,12 +132,13 @@ public class MemAppenderTest {
     public void testExportToJSONWithDiscardedLogs(){
         MemAppender memAppender = new MemAppender();
         memAppender.setName("test4");
-        memAppender.setMaxSize(1L);
+        memAppender.setMaxSize(2L);
         Logger logger = Logger.getLogger(MemAppenderTest.class);
         logger.addAppender(memAppender);
 
         logger.info("This is an info message.");
         logger.error("This is an error message.");
+        logger.info("This is another info message.");
         String fileName = "/test4.json";
         Path path = Paths.get(System.getProperty("user.dir") + fileName);
 
