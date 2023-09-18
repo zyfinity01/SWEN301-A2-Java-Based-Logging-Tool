@@ -45,7 +45,6 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
 
     @Override
     public void setName(String name) {
-        //this.name = name;
         super.setName(name);
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         ObjectName objectName = null;
@@ -64,7 +63,6 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
 
     public String[] getLogs() {
         String[] logs = new String[events.size()];
-        PatternLayout layout = (PatternLayout) this.getLayout();
         for (int i = 0; i < events.size(); i++) {
             logs[i] = new JsonLayout().format(events.get(i));
         }
